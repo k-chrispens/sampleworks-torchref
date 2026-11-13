@@ -26,6 +26,7 @@ from sampleworks.core.losses.options import (
     option_type,
     RealSpaceDensityOptions,
     StructureFactorOptions,
+    TorchRefOptions,
 )
 from sampleworks.utils.guidance_constants import Losses
 
@@ -150,6 +151,14 @@ LOSS_SPECS: dict[Losses, LossSpec] = {
         builder_path="sampleworks.core.losses.diffuse_bragg:build_diffuse_bragg_loss",
         description="Bragg amplitudes plus anisotropic diffuse intensities, via lunus.sf.",
         conditional_required_options=_diffuse_bragg_required,
+    ),
+    Losses.TORCHREF: LossSpec(
+        name=Losses.TORCHREF,
+        options_cls=TorchRefOptions,
+        builder_path="sampleworks.core.losses.torchref_loss:build_torchref_loss",
+        description="TorchRef refinement targets: sigma_A ML X-ray likelihood (MTZ) plus "
+        "geometry restraints, with TorchRef's scaler.",
+        required_options=("mtzfile",),
     ),
 }
 

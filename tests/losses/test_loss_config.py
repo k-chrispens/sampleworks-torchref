@@ -1,10 +1,12 @@
 """Tests for loss configuration parsing (issue #358)."""
 
+import dataclasses
 import json
 import pickle
 
 import pytest
 from sampleworks.core.losses.config import LossConfig, LossEntry
+from sampleworks.core.losses.registry import get_loss_spec
 from sampleworks.utils.guidance_constants import Losses
 
 
@@ -230,7 +232,14 @@ class TestPerProteinOptions:
 
         assert config.missing_required_options() == {}
 
-    @pytest.mark.parametrize("loss", list(Losses))
+    @pytest.mark.parametrize(
+        "loss",
+        [
+            loss
+            for loss in Losses
+            if "resolution" in {f.name for f in dataclasses.fields(get_loss_spec(loss).options_cls)}
+        ],
+    )
     @pytest.mark.parametrize("resolution", [0.0, -1.0, float("nan"), float("inf"), "1.8", True])
     def test_each_loss_rejects_an_invalid_resolution(self, loss, resolution):
         with pytest.raises(ValueError, match="resolution must be a positive, finite number"):
