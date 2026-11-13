@@ -154,6 +154,7 @@ readiness table, and [docs/IT_OPT_TESTING.md](docs/IT_OPT_TESTING.md) for how to
 | `real_space_density` (default) | Fit to a density map                                                   | `--density`, `--resolution`, `--loss-order`, `--em`, `--scattering-table`                      |
 | `structure_factor`             | Fit to structure-factor amplitudes from an MTZ                         | `--mtzfile`, `--expcolumns`, `--resolution`, `--bulk-solvent`, `--scattering-factor-mode`, ... |
 | `diffuse_bragg`                | Fit to Bragg amplitudes and anisotropic diffuse intensities (lunus.sf) | `--bragg-target`, `--diffuse-target`, `--bragg-weight`, `--resolution`, ...                    |
+| `torchref`                     | TorchRef refinement targets: sigma_A ML on MTZ amplitudes plus geometry restraints | `--mtzfile`, `--expcolumns`, `--resolution`, `--xray-mode`, `--geometry-weight`        |
 
 ```bash
 sampleworks-guidance --model boltz2 --guidance-type pure_guidance \
@@ -180,6 +181,12 @@ structure_factor:
 
 Weights default to `1/N` when omitted, so combining losses leaves the meaning of the
 guidance step size intact.
+
+The `torchref` loss evaluates TorchRef's own refinement targets on the sampled ensemble,
+each member a TorchRef model combined in a `MixedModel` at fractions 1/N: its scaler
+(refit every call), its X-ray target and per-member geometry restraints, weighted as in
+TorchRef refinement.
+It needs TorchRef, which the `boltz` and `boltz-dev` environments carry.
 
 ## Grid Search
 

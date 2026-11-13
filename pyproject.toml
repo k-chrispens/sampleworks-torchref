@@ -106,23 +106,20 @@ PYTHONNOUSERSITE = "1"
 
 [tool.pixi.dependencies]
 ninja = "*"
-# protenix 0.7.3 pins numpy==1.26.4. Remove this numpy<2.0 cap once we upgrade
-# beyond protenix 0.7.3.
-numpy = "<2.0"
 pyarrow = "==17.0.0"
 
 [tool.pixi.environments]
-analysis = {features = ["analysis", "external-tools"]}
-analysis-dev = {features = ["analysis", "dev", "external-tools"]}
-boltz = {features = ["boltz", "diffuse"]}
-boltz-analysis = {features = ["boltz", "analysis"]}
-boltz-dev = {features = ["boltz", "dev", "diffuse"]}
-protenix = {features = ["protenix", "diffuse"]}
-protenix-dev = {features = ["protenix", "dev", "diffuse"]}
-protpardelle = {features = ["protpardelle", "diffuse"]}
-protpardelle-dev = {features = ["protpardelle", "dev", "diffuse"]}
-rf3 = {features = ["rf3", "diffuse"]}
-rf3-dev = {features = ["rf3", "dev", "diffuse"]}
+analysis = {features = ["analysis", "external-tools", "numpy1"]}
+analysis-dev = {features = ["analysis", "dev", "external-tools", "numpy1"]}
+boltz = {features = ["boltz", "diffuse", "torchref"]}
+boltz-analysis = {features = ["boltz", "analysis", "numpy1"]}
+boltz-dev = {features = ["boltz", "dev", "diffuse", "torchref"]}
+protenix = {features = ["protenix", "diffuse", "numpy1"]}
+protenix-dev = {features = ["protenix", "dev", "diffuse", "numpy1"]}
+protpardelle = {features = ["protpardelle", "diffuse", "numpy1"]}
+protpardelle-dev = {features = ["protpardelle", "dev", "diffuse", "numpy1"]}
+rf3 = {features = ["rf3", "diffuse", "numpy1"]}
+rf3-dev = {features = ["rf3", "dev", "diffuse", "numpy1"]}
 
 [tool.pixi.feature.boltz]
 platforms = ["linux-64-cuda-12", "osx-arm64"]
@@ -180,6 +177,12 @@ platforms = ["linux-64-cuda-12", "osx-arm64"]
 # scripts/eval/run_and_process_tortoize.py.
 tortoize = ">=2.0.16,<3"
 
+# protenix 0.7.3 pins numpy==1.26.4. Remove this numpy<2.0 cap once we upgrade
+# beyond protenix 0.7.3. It is a feature rather than workspace-wide so the environments
+# with TorchRef, which needs numpy>=2, can leave it out.
+[tool.pixi.feature.numpy1.dependencies]
+numpy = "<2.0"
+
 [tool.pixi.feature.protenix]
 platforms = ["linux-64-cuda-12"]
 pypi-dependencies = {"einx" = "*", "protenix" = "*", "triton" = "*"}
@@ -215,6 +218,8 @@ torch = ">=2.6.0,<2.8"
 transformers = "*"
 wandb = "*"
 
+[tool.pixi.feature.rf3]
+
 [tool.pixi.feature.rf3.pypi-dependencies]
 rc-foundry = {editable = true, extras = ["rf3"], git = "https://github.com/k-chrispens/foundry.git"}
 
@@ -223,6 +228,14 @@ rc-foundry = {editable = true, extras = ["rf3"], git = "https://github.com/k-chr
 cuequivariance = "==0.9.0"
 cuequivariance-ops-torch-cu12 = "==0.9.0"
 cuequivariance-torch = "==0.9.0"
+
+# TorchRef refinement targets for the torchref loss. TorchRef requires numpy>=2, so
+# these environments omit numpy1.
+[tool.pixi.feature.torchref]
+platforms = ["linux-64-cuda-12", "osx-arm64"]
+
+[tool.pixi.feature.torchref.pypi-dependencies]
+torchref = ">=0.8.0,<0.9"
 
 [tool.pixi.pypi-dependencies]
 sampleworks = {editable = true, path = "."}

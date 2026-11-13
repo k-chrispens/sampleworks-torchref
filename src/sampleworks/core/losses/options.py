@@ -192,6 +192,31 @@ class DiffuseBraggOptions:
         _check_resolution(self.resolution)
 
 
+@dataclass(frozen=True)
+class TorchRefOptions:
+    """Options for the TorchRef refinement-target loss.
+
+    See ``TorchRefLoss`` in :mod:`sampleworks.core.losses.torchref_loss`.
+    """
+
+    mtzfile: str | None = opt(None, help="MTZ holding the target amplitudes", path=True)
+    expcolumns: list[str] | None = opt(
+        None,
+        help="MTZ amplitude and sigma column names, e.g. --expcolumns FP SIGFP "
+        "(default: TorchRef's column detection)",
+    )
+    resolution: float | None = opt(
+        None, help="High-resolution limit (dmin) in Angstroms (default: the MTZ's own)"
+    )
+    xray_mode: str = opt("ml", help="TorchRef X-ray target (default ml: sigma_A ML)")
+    geometry_weight: float = opt(
+        0.2, help="Weight of TorchRef's geometry restraints relative to the X-ray term"
+    )
+
+    def __post_init__(self):
+        _check_resolution(self.resolution)
+
+
 def option_type(options_cls: type, name: str) -> Any:
     """Return the declared type of one option, with ``None`` stripped from unions.
 
